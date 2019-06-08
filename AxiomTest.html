@@ -44,6 +44,11 @@
         color: rgba(255, 255, 255, 0.8);
         font-size: 3rem;
       }
+      .helper {
+        margin-top: 70px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 1.5rem;
+      }
       .result-button {
         outline: none;
         font-size: 1rem;
@@ -84,7 +89,7 @@
         color: rgba(255, 255, 255, 0.8);
         height: 2rem;
         font-size: 2rem;
-        width: 20rem;
+        width: 90%;
         padding: 5px 0 8px;
         border-radius: 1.5rem;
         text-align: center;
@@ -116,13 +121,14 @@
   <body>
     <div class="container">
       <span class="calc">Калькулятор</span>
+      <span class="helper">Введите число</span>
       <div class="my-form">
         <input type="text" class="form-input" />
         <button class="form-button">Ввод</button>
       </div>
 
       <div class="error">Ошибка ввода!</div>
-      <div class="answer">0</div>
+      <div class="answer"></div>
       <div style="margin-top: 20px;">
         <button class="result-button">Получить результат!</button>
         <button class="reset-button">Сбросить</button>
