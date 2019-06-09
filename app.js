@@ -16,7 +16,8 @@ const numbers = {
   //"7": /(^|\s)семь/,
   "7": "семь",
   "8": "восемь",
-  "9": "девять"
+  "9": "девять",
+  "10": "десять"
 };
 
 const signs = {
@@ -53,7 +54,7 @@ const replaceWithSigns = str => {
   return newStr;
 };
 //test
-const replaceAllTest = str => {
+const replaceAll = str => {
   let newStr = replaceWithNumbers(str);
   newStr = replaceWithSigns(newStr);
   return newStr;
@@ -121,7 +122,7 @@ resultButton.addEventListener("click", e => {
   if (check1 == 1) {
     alertOnMistake("Последним элементом не может быть оператор!");
   } else {
-    let sum = replaceAllTest(delPronoun(answer.innerHTML));
+    let sum = replaceAll(delPronoun(answer.innerHTML));
     answer.innerHTML = Math.round(eval(sum) * 100) / 100;
     helper.innerHTML = "Введите число";
     check = -1;

@@ -49,6 +49,11 @@
         color: rgba(255, 255, 255, 0.8);
         font-size: 1.5rem;
       }
+      .rules {
+        color: rgba(255, 255, 255, 0.8);
+        margin-top: 30px;
+        width: 60%;
+      }
       .result-button {
         outline: none;
         font-size: 1rem;
@@ -115,6 +120,9 @@
         .my-form {
           width: 70%;
         }
+        .rules {
+          width: 90%;
+        }
       }
     </style>
   </head>
@@ -133,7 +141,18 @@
         <button class="result-button">Получить результат!</button>
         <button class="reset-button">Сбросить</button>
       </div>
+      <span class="rules" style="text-align: center; font-size: 1.2rem"
+        >Правила</span
+      >
+      <p class="rules">
+        По очереди вводите числа и арифметические операции. В качестве числа
+        можно ввести любое целое число цифрами или словами числа от нуля до
+        десяти. В качестве оператора вводятся 4 основные арифметические операции
+        символами (+ ,- ,* ,/ ) или словами (плюс, минус, умножить, разделить).
+        По клавише Enter числа добавляются в выражение для последующего
+        определения результат.
+      </p>
     </div>
-    <script src="test.js"></script>
+    <script src="app.js"></script>
   </body>
 </html>
