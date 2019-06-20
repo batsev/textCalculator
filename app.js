@@ -1,111 +1,56 @@
 //Declaring variables
-const textInput = document.querySelector(".form-input");
-const formButton = document.querySelector(".form-button");
+const textInput = document.querySelector(".my-form");
 const resultButton = document.querySelector(".result-button");
 const answer = document.querySelector(".answer");
-const helper = document.querySelector(".helper");
+const error = document.querySelector(".error");
 
-const numbers = {
-  "0": "ноль",
-  "1": "один",
-  "2": "два",
-  "3": "три",
-  "4": "четыре",
-  "5": "пять",
-  "6": "шесть",
-  //"7": /(^|\s)семь/,
-  "7": "семь",
-  "8": "восемь",
-  "9": "девять",
-  "10": "десять"
+const operators = {
+  "0": [/ноль/g, /нулём/g, /нуля/g, /нулем/g],
+  "1": [/один/g, /единица/g, /одного/g, /одним/g, /единицу/g, /единицой/g],
+  "2": [/два/g, /двух/g, /двумя/g],
+  "3": [/три/g, /трёх/g, /трех/g, /тремя/g],
+  "4": [/четыре/g, /четырёх/g, /четырех/g, /четырьмя/g],
+  "5": [/пять/g, /пяти/g, /пятью/g],
+  "6": [/шесть/g, /шести/g, /шестью/g],
+  "7": [/(^|\s)семь/g, /(^|\s)семи/g, /(^|\s)семью/g],
+  "8": [/восемь/g, /восьми/g, /восемью/g],
+  "9": [/девять/g, /девяти/g, /девятю/g],
+  "10": [/десять/g, /десяти/g, /десятю/g],
+  "/": [/разделить на/g, /поделить на/g, /разделить/g, /поделить/g],
+  "*": [/умножить на/g, /помножить на/g, /помножить/g, /умножить/g],
+  "+": [/плюс/g, /сложить с/g],
+  "-": [/минус/g, /вычесть из/g]
 };
 
-const signs = {
-  "/": "разделить",
-  "*": "умножить",
-  "+": "плюс",
-  "-": "минус"
-};
 //-----------WORKSPACE-----------
-
-const addPronoun = str => {
-  if (!Object.values(signs).includes(str)) return str;
-  return str == "умножить" || str == "разделить" ? `${str} на` : str;
-};
-
-const delPronoun = str => {
-  return str.replace("на", "");
-};
-//.........Replace .........
-const replaceWithNumbers = str => {
-  let newNum = numbers,
-    newStr = str;
-  newNum["7"] = /(^|\s)семь/;
-  for (let porp in newNum) {
-    newStr = newStr.replace(newNum[porp], porp);
+function calc(str) {
+  let newStr = replaceWordsWithValid(str);
+  newStr = deleteMusor(newStr);
+  if (newStr == "") {
+    alertOnMistake("Ошибка ввода!");
+    return null;
   }
-  return newStr;
-};
-const replaceWithSigns = str => {
-  let newStr = str;
-  for (let prop in signs) {
-    newStr = newStr.replace(signs[prop], prop);
-  }
-  return newStr;
-};
-//test
-const replaceAll = str => {
-  let newStr = replaceWithNumbers(str);
-  newStr = replaceWithSigns(newStr);
-  return newStr;
-};
-//,,,,,,,,,,,,,,CHECK,,,,,,,,,,
-
-const checkForNumber = str => {
-  return /^-{0,1}\d+$/.test(str) || Object.values(numbers).includes(str)
-    ? true
-    : false;
-};
-
-const checkForSign = str => {
-  return Object.values(signs).includes(str) || str in signs ? true : false;
-};
-
-//.........ОПЕРАЦИИ................
-var check = 0; //проверка произвелся ли финальный подсчет
-var check1 = 1; // проверка на ввод элемента (цифра или оператор)
-const performCalculation = () => {
-  if (check == -1) {
-    answer.innerHTML = "";
-    check = 0;
-  }
-  let elem = textInput.value;
-  ////////
-  if (check1 == 1) {
-    if (!checkForNumber(elem)) {
-      alertOnMistake("Неправильно введеное число!");
-      return;
+  console.log(newStr);
+  answer.innerHTML = newStr;
+  try {
+    var result = eval(newStr);
+    if (result == Infinity || result == -Infinity) {
+      alertOnMistake("На ноль делить нельзя!");
+      return null;
     }
-    check1 = 0;
-    helper.innerHTML = "Введите оператор";
-  } else {
-    if (!checkForSign(elem)) {
-      alertOnMistake("Неправльное введеный оператор!");
-      return;
-    }
-    elem = addPronoun(elem);
-    check1 = 1;
-    helper.innerHTML = "Введите число";
+  } catch {
+    alertOnMistake("Ошибка ввода!");
+    return null;
   }
-  // if (!(checkForSign(elem) || checkForNumber(elem))) {
-  //   alertOnMistake();
-  //   return;
-  // }
-  // if (checkForSign(elem)) elem = addPronoun(elem);
-  ////////
-  answer.innerHTML += " " + elem;
+  return [newStr, Math.round(result * 100) / 100];
+}
+
+function performCalculation() {
+  answer.style.backgroundColor = "";
+  const finalAnswer = calc(textInput.value);
+  if (finalAnswer) answer.innerHTML = `${finalAnswer[0]} = ${finalAnswer[1]}`;
   textInput.value = "";
-};
+}
 
 //EVENT LISTENERS ON ENTER AND CLICK
 textInput.addEventListener("keyup", function(e) {
@@ -114,34 +59,28 @@ textInput.addEventListener("keyup", function(e) {
   }
 });
 
-formButton.addEventListener("click", e => {
+resultButton.addEventListener("click", e => {
   performCalculation();
 });
 
-resultButton.addEventListener("click", e => {
-  if (check1 == 1) {
-    alertOnMistake("Последним элементом не может быть оператор!");
-  } else {
-    let sum = replaceAll(delPronoun(answer.innerHTML));
-    answer.innerHTML = Math.round(eval(sum) * 100) / 100;
-    helper.innerHTML = "Введите число";
-    check = -1;
-    check1 = 1;
+// ERROR
+function alertOnMistake(str) {
+  error.innerHTML = str;
+  error.style.opacity = 1;
+  setTimeout(() => (error.style.opacity = 0), 1000);
+}
+
+//Ubiraem musor
+function deleteMusor(str) {
+  return str.replace(/([^ 0-9*/+-.]+)/g, "");
+}
+//Replace all characters with valid operators for EVAL
+
+function replaceWordsWithValid(str) {
+  for (let prop in operators) {
+    operators[prop].forEach(word => {
+      str = str.replace(word, prop);
+    });
   }
-});
-
-//reset
-document.querySelector(".reset-button").addEventListener("click", e => {
-  check = 0;
-  check1 = 1;
-  helper.innerHTML = "Введите число";
-  answer.innerHTML = "";
-  textInput.value = "";
-});
-
-//ERROR
-const alertOnMistake = str => {
-  document.querySelector(".error").innerHTML = str;
-  document.querySelector(".error").style.opacity = 1;
-  setTimeout(() => (document.querySelector(".error").style.opacity = 0), 1000);
-};
+  return str;
+}
