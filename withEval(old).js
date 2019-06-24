@@ -1,4 +1,3 @@
-//Declaring variables
 const textInput = document.querySelector(".my-form");
 const resultButton = document.querySelector(".result-button");
 const answer = document.querySelector(".answer");
@@ -30,13 +29,18 @@ function calc(str) {
     alertOnMistake("Ошибка ввода!");
     return null;
   }
+  console.log(newStr);
   answer.innerHTML = newStr;
-  let result = zames(newStr);
-  if (!result) {
+  try {
+    var result = eval(newStr);
+    if (result == Infinity || result == -Infinity) {
+      alertOnMistake("На ноль делить нельзя!");
+      return null;
+    }
+  } catch {
     alertOnMistake("Ошибка ввода!");
     return null;
   }
-
   return [newStr, Math.round(result * 100) / 100];
 }
 
@@ -67,12 +71,11 @@ function alertOnMistake(str) {
 
 //Ubiraem musor
 function deleteMusor(str) {
-  return str.replace(/([^ 0-9*/+-.]+)/g, "");
+  return str.replace(/([^ 0-9*/+-.]+)/g, "").replace(/\s\s+/g, " ");
 }
 //Replace all characters with valid operators for EVAL
 
 function replaceWordsWithValid(str) {
-  str = str.replace(/\s\s+/g, " ");
   for (let prop in operators) {
     if (!operators[prop][1]) continue;
     operators[prop][1].forEach(word => {
@@ -81,50 +84,3 @@ function replaceWordsWithValid(str) {
   }
   return str;
 }
-
-function zames(str) {
-  let temp;
-  if (/([+-]?([0-9]*[.])?[0-9]+) +([+-]?([0-9]*[.])?[0-9]+)/g.test(str))
-    return null;
-  //проверка чтобы не было чисел стоящих через пробел
-  let str1 = str.replace(/\s/g, ""); //убираем пробелы
-  if (
-    /(^[*/]|^[+-]{2})|([-+]{3,})|[*/][+-]{2}|([-+][*/])|[*/]{2,}|([-+*/]$)/g.test(
-      str1
-    )
-  )
-    return null; //завершает функцию когда видит вначале знаки умножения болюше одного подряд знака умножения и деления и в кноце знаков
-  str1 = str1
-    .replace(/(\+\-)|(\-\+)/g, "-")
-    .replace(/-{2}/g, "+")
-    .match(/[*/]|([+\-]?([0-9\.]+))/g); //основа основ. делит строку на числа и знаки умножения/деления
-  //https://coderwall.com/p/prvrnw/remove-items-from-array-while-iterating-over-it
-  for (let index = str1.length - 1; index >= 0; --index) {
-    if (!operators[str1[index]]) continue;
-    console.log(str1[index]);
-    if (operators[str1[index]][0] == 2) {
-      switch (str1[index]) {
-        case "/":
-          if (str1[index + 1] == "0") return null;
-          temp = parseFloat(str1[index - 1]) / parseFloat(str1[index + 1]);
-          temp = Math.round(temp * 100) / 100;
-          break;
-        case "*":
-          temp = parseFloat(str1[index - 1]) * parseFloat(str1[index + 1]);
-          temp = Math.round(temp * 100) / 100;
-          break;
-        default:
-          return;
-      }
-      str1[index - 1] = temp + "";
-      str1.splice(index, 2);
-    }
-  }
-
-  return str1.reduce(function(sum, value) {
-    return parseFloat(sum) + parseFloat(value);
-  });
-}
-
-// if (!operators[str1[index]]) continue;
-//   if (operators[str1[index]][0] == 1)
