@@ -101,7 +101,6 @@ function zames(str) {
   //https://coderwall.com/p/prvrnw/remove-items-from-array-while-iterating-over-it
   for (let index = str1.length - 1; index >= 0; --index) {
     if (!operators[str1[index]]) continue;
-    console.log(str1[index]);
     if (operators[str1[index]][0] == 2) {
       switch (str1[index]) {
         case "/":
